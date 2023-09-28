@@ -1,26 +1,44 @@
-import { Box, Card, Paper } from '@mui/material';
-import React from 'react';
-import ReactPlayer from 'react-player';
+import React, { useEffect, useRef } from 'react';
 
-const VideoPlayer = ({ url }: { url: string }) => {
-  if (typeof window == 'undefined') return null;
+export default function VideoStream() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const videoUrl = '/api/video'; // URL to your Next.js API endpoint
+
+    const startStreaming = async () => {
+      const mediaSource = new MediaSource();
+      videoRef.current.src = URL.createObjectURL(mediaSource);
+
+      mediaSource.addEventListener('sourceopen', async () => {
+        const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+
+        const response = await fetch(videoUrl);
+        const reader = response.body.getReader();
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          sourceBuffer.appendBuffer(value);
+        }
+      });
+    };
+
+    startStreaming();
+  }, []);
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        paddingTop: '56.25%', // 16:9 aspect ratio (height = width * 9/16)
-        borderRadius: 1,
-        overflow: 'hidden',
-      }}
-      component={Paper}
-      variant='outlined'
-    >
-      <ReactPlayer url={url} playing controls height="100%" width={'100%'} style={{ position: 'absolute', top: 0, left: 0 }} loop />
-    </Box>
+    <div>
+      <h1>Video Stream</h1>
+      <video ref={videoRef} autoPlay controls width="640" height="480"></video>
+    </div>
   );
-};
+}
 
-export default VideoPlayer;
+
+
+

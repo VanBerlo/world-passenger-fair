@@ -15,6 +15,7 @@
     "@types/react-dom": "^18.2.7",
     "mongoose": "^7.4.2",
     "next": "latest",
+    "opencv4nodejs": "^5.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-player": "^2.13.0",

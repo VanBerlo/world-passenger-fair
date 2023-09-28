@@ -91,7 +91,7 @@ function IndexPage() {
     const CARRIAGE_CAPACITY = 8;
     try {
       // Generate random data for carriages and passengers
-      const binaryRandom = () => (Math.random() > 0.5😌 ? 'Occupied' : 'Free');
+      const binaryRandom = () => (Math.random() > 0.5 ? 'Occupied' : 'Free');
       const date = getRandomDateWithinDay();
       const carriages = [];
 
