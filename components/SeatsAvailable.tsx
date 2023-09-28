@@ -12,14 +12,14 @@ function SeatsAvailable(props) {
   const lastestDatapoint = data[data?.length - 1];
   const rows = lastestDatapoint.carriages[active].seatingArray;
   const { passengers, capacity } = lastestDatapoint.carriages[active];
-  const occupancy = passengers / capacity;
+  // const occupancy = passengers / capacity;
 
-  const renderSeat = (val: number | null) => {
+  const renderSeat = (val: string | null) => {
     let img = null;
     const width = 85;
     const height = 80;
-    if (val == 1) img = <Image alt="" src={'/assets/svgs/seat_empty_grey.svg'} width={width} height={height} />;
-    if (val == 0) img = <Image alt="" src={'/assets/svgs/seat_empty_grey.svg'} width={width} height={height} style={{ opacity: 0.2 }} />;
+    if (val === 'Occupied') img = <Image alt="" src={'/assets/svgs/seat_empty_grey.svg'} width={width} height={height} style={{ opacity: 0.2 }} />;
+    if (val === 'Free') img = <Image alt="" src={'/assets/svgs/seat_empty_grey.svg'} width={width} height={height} />;
     return (
       <Box width={'100%'} height={'100%'} position={'relative'} p={1}>
         {img}
@@ -50,7 +50,7 @@ function SeatsAvailable(props) {
     <Box sx={{ width: '100%', height: 'fit', maxHeight: '100%' }}>
       <CustomCardHeader
         header={'Available Seats'}
-        subheader={`${passengers} / ${capacity} seats full in carriage ${active + 1}`}
+        subheader={`${passengers} / ${capacity} Seats full in Carriage ${active + 1}`}
         sx={{ px: 2, mb: 3 }}
       />
 

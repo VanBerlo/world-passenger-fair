@@ -4,7 +4,7 @@ import { SampleType } from '../models/Sample';
 import { IResponse } from '../interfaces/response.interface';
 import { useEffect, useState } from 'react';
 import BusyBarChart from './BusyBarChart';
-import { Box,  Fab, Grid, Paper } from '@mui/material';
+import { Box, Fab, Grid, Paper } from '@mui/material';
 import Header from './Header';
 import dynamic from 'next/dynamic';
 import Train from './Train';
@@ -23,7 +23,7 @@ const VideoPlayer = dynamic(() => import('./VideoPlayer').then((mod) => mod), { 
 // Initialize a timeout variable for data fetching
 let dataFetchTimeout: number | NodeJS.Timeout | undefined;
 const ADD_DATA_INTERVAL = 5000;
-const READ_DATA_INTERVAL = 5000;
+const READ_DATA_INTERVAL = 1000;
 const BLOCK_DATA_UPDATES = false;
 
 // Define the main functional component
@@ -40,6 +40,7 @@ function IndexPage() {
     const encoder = new TextEncoder();
     try {
       const encodedData = encoder.encode(cmd(data));
+      console.log(`Sending data: ${data}`);
       await writer.write(encodedData);
     } catch (error) {
       console.error('Error sending data:', error);
@@ -71,7 +72,7 @@ function IndexPage() {
     if (port && newData) {
       const latestValue = newData[newData.length - 1];
       const { passengers } = latestValue.carriages[activeCarriage];
-      sendDataToDisplay(8-passengers);
+      sendDataToDisplay(8 - passengers);
     }
   };
 
@@ -90,8 +91,7 @@ function IndexPage() {
     const CARRIAGE_CAPACITY = 8;
     try {
       // Generate random data for carriages and passengers
-      const r = () => Math.floor(Math.random() * CARRIAGE_CAPACITY) + 1;
-      const binaryRandom = () => Math.round(Math.random());
+      const binaryRandom = () => (Math.random() > 0.5😌 ? 'Occupied' : 'Free');
       const date = getRandomDateWithinDay();
       const carriages = [];
 
@@ -103,9 +103,21 @@ function IndexPage() {
           [binaryRandom(), null, binaryRandom(), binaryRandom()],
           [binaryRandom(), null, null, binaryRandom()],
         ];
+
         const passengers = seatingArray.reduce((acc, row) => {
-          return acc + row.reduce((a, seat) => (a += !seat ? 0 : 1), 0);
+          return (
+            acc +
+            row.reduce((a, seat) => {
+              let val = 0;
+              if (seat === 'Occupied') {
+                val = 1;
+              }
+
+              return (a += val);
+            }, 0)
+          );
         }, 0);
+
         const occupancy = passengers / capacity;
         const entry = { passengers, capacity, occupancy, seatingArray };
         carriages.push(entry);
@@ -184,7 +196,7 @@ function IndexPage() {
       
       
       {/* CONTENT */}
-      
+
       <Fab sx={{ position: 'absolute', bottom: 40, left: 40 }} onClick={() => deleteSamples()}>
         <DeleteForever />
       </Fab>
