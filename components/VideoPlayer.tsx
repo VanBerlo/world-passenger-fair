@@ -1,3 +1,5 @@
+// components/VideoStream.js
+
 import React, { useEffect, useRef } from 'react';
 
 export default function VideoStream() {
@@ -10,21 +12,12 @@ export default function VideoStream() {
       const mediaSource = new MediaSource();
       videoRef.current.src = URL.createObjectURL(mediaSource);
 
-      mediaSource.addEventListener('sourceopen', async () => {
+      mediaSource.addEventListener('sourceopen', () => {
         const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
 
-        const response = await fetch(videoUrl);
-        const reader = response.body.getReader();
-
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            break;
-          }
-
-          sourceBuffer.appendBuffer(value);
-        }
+        fetch(videoUrl)
+          .then((response) => response.body.pipeTo(new WritableStream(sourceBuffer)))
+          .catch((error) => console.error('Error fetching video:', error));
       });
     };
 
@@ -38,7 +31,3 @@ export default function VideoStream() {
     </div>
   );
 }
-
-
-
-
