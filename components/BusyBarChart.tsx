@@ -104,21 +104,7 @@ const BusyBarChart = ({ data = [] }: { data: SampleType[] | null }) => {
           {/* <YAxis dataKey="sum" /> */}
           <Tooltip />
           {/* <CartesianGrid strokeDasharray="3 3" /> */}
-          <Bar dataKey="sum" barSize={BAR_SIZE} shape={<RoundedBar />}>
-            <LabelList
-              dataKey="sum"
-              content={(props) => {
-                if (props.value === maxDataValue) {
-                  return (
-                    <text x={props.x + props.width / 2} y={props.y - 12} fill={theme.palette.primary.main} textAnchor="middle">
-                      {props.value}
-                    </text>
-                  );
-                }
-                return null; // Render no label for other bars
-              }}
-            />
-          </Bar>
+          <Bar dataKey="sum" barSize={BAR_SIZE} shape={<RoundedBar />}></Bar>
         </BarChart>
       </ResponsiveContainer>
     </Box>
