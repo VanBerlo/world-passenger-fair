@@ -22,8 +22,8 @@ const VideoPlayer = dynamic(() => import('./VideoPlayer').then((mod) => mod), { 
 
 // Initialize a timeout variable for data fetching
 let dataFetchTimeout: number | NodeJS.Timeout | undefined;
-const ADD_DATA_INTERVAL = 20000;
-const READ_DATA_INTERVAL = 20000;
+const ADD_DATA_INTERVAL = 5000;
+const READ_DATA_INTERVAL = 10000;
 const BLOCK_DATA_UPDATES = false;
 
 // Define the main functional component
