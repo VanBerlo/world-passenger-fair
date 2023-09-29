@@ -8,8 +8,11 @@ function SeatsAvailable(props) {
   const { data = [], active = 0 } = props;
 
   if (!data || data.length <= 0) return null;
-
+  
   const lastestDatapoint = data[data?.length - 1];
+  
+  if (!lastestDatapoint || lastestDatapoint?.carriages[active]) return null;
+
   const rows = lastestDatapoint.carriages[active].seatingArray;
   const { passengers, capacity } = lastestDatapoint.carriages[active];
   // const occupancy = passengers / capacity;
