@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 // const host = '127.0.0.1';
 // const port = 9997;
 
-const host = '10.0.0.10';
+const host = '10.0.0.11';
 const port = 8083;
 
 function VideoPlayer() {
@@ -12,6 +12,8 @@ function VideoPlayer() {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    
+    
     const fetchData = () => {
       // Create a WebSocket connection when the component mounts
       socketRef.current = new WebSocket(`ws://${host}:${port}`);
@@ -26,12 +28,11 @@ function VideoPlayer() {
           const image = new Image();
           image.src = URL.createObjectURL(new Blob([e.data])); // Create a blob from the received data
           image.onload = () => {
-            ctx.drawImage(image, 0, 0, canvasRef.current.width);
+            ctx.drawImage(image, 0, 0, canvasRef.current.width, canvasRef.current.height);
           };
         }
       });
 
-      fetchData();
 
       // Cleanup the WebSocket when the component unmounts
       return () => {
@@ -40,6 +41,9 @@ function VideoPlayer() {
         }
       };
     };
+
+    fetchData();
+
   }, []);
 
   return (
