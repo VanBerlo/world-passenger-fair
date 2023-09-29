@@ -22,8 +22,8 @@ const VideoPlayer = dynamic(() => import('./VideoPlayer').then((mod) => mod), { 
 
 // Initialize a timeout variable for data fetching
 let dataFetchTimeout: number | NodeJS.Timeout | undefined;
-const ADD_DATA_INTERVAL = 5000;
-const READ_DATA_INTERVAL = 1000;
+const ADD_DATA_INTERVAL = 20000;
+const READ_DATA_INTERVAL = 20000;
 const BLOCK_DATA_UPDATES = false;
 
 // Define the main functional component
@@ -91,8 +91,9 @@ function IndexPage() {
     const CARRIAGE_CAPACITY = 8;
     try {
       // Generate random data for carriages and passengers
-      const binaryRandom = () => (Math.random() > 0.5😌 ? 'Occupied' : 'Free');
-      const date = getRandomDateWithinDay();
+      const binaryRandom = () => (Math.random() > 0.5 ? 'Occupied' : 'Free');
+      // const date = getRandomDateWithinDay();
+      const date = new Date();
       const carriages = [];
 
       for (let i = 0; i < CARRIAGE_COUNT; i++) {
@@ -146,28 +147,6 @@ function IndexPage() {
     }
   };
 
-  // Function to delete all samples
-  const deleteSamples = async () => {
-    try {
-      const response = await fetch('/api/delete-samples', {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete the samples!');
-      }
-
-      const data = await response.json();
-      setSampleData(null);
-      return data;
-    } catch (error) {
-      console.log('There was a problem deleting the Samples.');
-      console.log(error);
-    }
-  };
-
   // Use the useEffect hook to start fetching data and simulate sample adding
   useEffect(() => {
     updateSampleData(READ_DATA_INTERVAL);
@@ -197,21 +176,22 @@ function IndexPage() {
       
       {/* CONTENT */}
 
-      <Fab sx={{ position: 'absolute', bottom: 40, left: 40 }} onClick={() => deleteSamples()}>
+      {/* <Fab sx={{ position: 'absolute', bottom: 40, left: 40 }} onClick={() => deleteSamples()}>
         <DeleteForever />
-      </Fab>
+      </Fab> */}
 
-      <Header activeCarriage={activeCarriage + 1} setActiveCarriage={setActiveCarriage} handlePortConnection={connectToPorts} port={port} />
+      <Header
+        activeCarriage={activeCarriage + 1}
+        setActiveCarriage={setActiveCarriage}
+        handlePortConnection={connectToPorts}
+        handleDataDeletion={() => setSampleData(null)}
+        port={port}
+      />
       <Grid container sx={{}}>
         {/* COLUMN 1 */}
         <Grid container item xs={4} direction={'column'} justifyContent={'space-between'}>
-          {/*TIMER */}
-          <Grid item component={Paper} variant="outlined" sx={{ p: 2 }}>
-            <Waittime />
-          </Grid>
-
           {/* CHART */}
-          <Grid item component={Paper} variant="outlined" sx={{ p: 2, mt: 2 }}>
+          <Grid item component={Paper} variant="outlined" sx={{ p: 2 }}>
             <BusyBarChart data={sampleData} />
           </Grid>
         </Grid>
