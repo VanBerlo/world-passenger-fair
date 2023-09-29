@@ -6,7 +6,7 @@ export default function VideoStream() {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const videoUrl = '/api/video'; // URL to your Next.js API endpoint
+    const videoUrl = '/api/video';
 
     const startStreaming = async () => {
       const mediaSource = new MediaSource();
@@ -16,7 +16,10 @@ export default function VideoStream() {
         const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
 
         fetch(videoUrl)
-          .then((response) => response.body.pipeTo(new WritableStream(sourceBuffer)))
+          .then((response) => {
+            console.log(response)
+            return response.body.pipeTo(new WritableStream(sourceBuffer));
+          })
           .catch((error) => console.error('Error fetching video:', error));
       });
     };
