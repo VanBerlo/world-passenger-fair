@@ -1,36 +1,63 @@
-// components/VideoStream.js
-
+import { Box, Paper } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 
-export default function VideoStream() {
-  const videoRef = useRef(null);
+// const host = '127.0.0.1';
+// const port = 9997;
+
+const host = '10.0.0.10';
+const port = 8083;
+
+function VideoPlayer() {
+  const canvasRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    const videoUrl = '/api/video';
+    const fetchData = () => {
+      // Create a WebSocket connection when the component mounts
+      socketRef.current = new WebSocket(`ws://${host}:${port}`);
 
-    const startStreaming = async () => {
-      const mediaSource = new MediaSource();
-      videoRef.current.src = URL.createObjectURL(mediaSource);
-
-      mediaSource.addEventListener('sourceopen', () => {
-        const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-
-        fetch(videoUrl)
-          .then((response) => {
-            console.log(response)
-            return response.body.pipeTo(new WritableStream(sourceBuffer));
-          })
-          .catch((error) => console.error('Error fetching video:', error));
+      socketRef.current.addEventListener('open', (e) => {
+        console.log('Connected!');
       });
-    };
 
-    startStreaming();
+      socketRef.current.addEventListener('message', (e) => {
+        if (canvasRef.current) {
+          const ctx = canvasRef.current.getContext('2d');
+          const image = new Image();
+          image.src = URL.createObjectURL(new Blob([e.data])); // Create a blob from the received data
+          image.onload = () => {
+            ctx.drawImage(image, 0, 0, canvasRef.current.width);
+          };
+        }
+      });
+
+      fetchData();
+
+      // Cleanup the WebSocket when the component unmounts
+      return () => {
+        if (socketRef.current) {
+          // socketRef.current.close();
+        }
+      };
+    };
   }, []);
 
   return (
-    <div>
-      <h1>Video Stream</h1>
-      <video ref={videoRef} autoPlay controls width="640" height="480"></video>
-    </div>
+    <Box
+      sx={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        paddingTop: '56.25%', // 16:9 aspect ratio (height = width * 9/16)
+        borderRadius: 1,
+        overflow: 'hidden',
+      }}
+      component={Paper}
+      variant="outlined"
+    >
+      <Box component={'canvas'} ref={canvasRef} alt="hello" height="100%" width={'100%'} style={{ position: 'absolute', top: 0, left: 0 }} />
+    </Box>
   );
 }
+
+export default VideoPlayer;

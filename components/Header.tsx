@@ -10,6 +10,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { Train } from '@mui/icons-material';
 
 export default function Header({ activeCarriage = 1, port, setActiveCarriage, handlePortConnection }) {
+  const [noMatrix, setNoMatrix] = React.useState(false);
+
   const handleCarriageChange = (e) => {
     if (setActiveCarriage) {
       setActiveCarriage(e.target.value);
@@ -18,7 +20,7 @@ export default function Header({ activeCarriage = 1, port, setActiveCarriage, ha
 
   return (
     <>
-      <Dialog open={Boolean(!port)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={Boolean(!port && !noMatrix)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">{'Connect The LED Matrix'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -28,6 +30,9 @@ export default function Header({ activeCarriage = 1, port, setActiveCarriage, ha
         <DialogActions>
           <Button onClick={handlePortConnection} color="primary" variant="contained">
             Connect LED Matrix
+          </Button>
+          <Button onClick={() => setNoMatrix(true)} color="primary" >
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

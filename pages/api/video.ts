@@ -1,23 +1,53 @@
+import fs from 'fs';
+import { promisify } from 'util';
+import { pipeline } from 'stream';
+import { nextTick } from 'process';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async (req, res) => {
-  if (req.method !== 'GET') {
+const pipelineAsync = promisify(pipeline);
+
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  
+  if (req.method !== 'POST') {
     return res.status(405).end(); // Method Not Allowed
   }
 
-  const hostIp = '10.0.0.11'; // Replace with your server IP address
-  const port = 8083;
+  const imageData: Buffer[] = [];
 
-  const clientSocket = require('net').Socket();
-  clientSocket.connect(port, hostIp, () => {
-    console.log('Connected to server');
+  req.on('data', (chunk) => {
+    imageData.push(chunk);
+  });
 
-    clientSocket.on('data', (packet) => {
-      res.write(packet); // Send raw binary data as response
-    });
+  req.on('end', async () => {
+    const decodedData = Buffer.concat(imageData);
+    const fileName = 'test.jpg';
 
-    req.on('close', () => {
-      clientSocket.destroy();
-      res.end();
-    });
+    try {
+      await pipelineAsync(
+        // Create a readable stream from the decoded data
+        readableFromBuffer(decodedData),
+        // Create a writable stream to save the image to a file
+        fs.createWriteStream(fileName)
+      );
+
+      console.log('Saved!');
+      res.status(200).end('Image saved successfully');
+    } catch (error) {
+      console.error('Error saving image:', error);
+      res.status(500).end('Internal Server Error');
+    }
+  });
+
+  req.on('error', (error) => {
+    console.error('Request error:', error);
+    res.status(500).end('Internal Server Error');
   });
 };
+
+function readableFromBuffer(buffer: Buffer) {
+  const { Readable } = require('stream');
+  const readable = new Readable();
+  readable.push(buffer);
+  readable.push(null);
+  return readable;
+}

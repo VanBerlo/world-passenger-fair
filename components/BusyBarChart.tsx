@@ -69,7 +69,6 @@ const BusyBarChart = ({ data = [] }: { data: SampleType[] | null }) => {
   }, [data?.length]);
 
   if (!data || data.length <= 0) {
-    console.log('No data passed to barchart');
     // return null;
   }
 
