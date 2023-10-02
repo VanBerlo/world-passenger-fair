@@ -308,7 +308,7 @@ function IndexPage() {
         {/* COLUMN 3 */}
 
         <Grid container item xs={3} direction={'column'} component={Paper} variant="outlined" sx={{ p: 2 }}>
-          {/* <SeatsAvailable data={sampleData} active={activeCarriage} /> */}
+          <SeatsAvailable data={sampleData} active={activeCarriage} />
         </Grid>
       </Grid>
 
