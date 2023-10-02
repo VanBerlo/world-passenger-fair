@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
 import { SampleType } from '../models/Sample';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/system';
@@ -69,7 +69,6 @@ const BusyBarChart = ({ data = [] }: { data: SampleType[] | null }) => {
   }, [data?.length]);
 
   if (!data || data.length <= 0) {
-    console.log('No data passed to barchart');
     // return null;
   }
 
@@ -99,8 +98,8 @@ const BusyBarChart = ({ data = [] }: { data: SampleType[] | null }) => {
   return (
     <Box sx={{ width: '100%' }}>
       <CustomCardHeader header={'Busy Moments'} subheader={''} />
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart width={500} height={320} data={cleanedData} margin={{ top: 10 }}>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart width={500} height={320} data={cleanedData} margin={{ top: 25 }}>
           <XAxis dataKey="hour" tickFormatter={(payload) => formatTo24HourClock(payload)} interval={'preserveStartEnd'} minTickGap={20} />
           {/* <YAxis dataKey="sum" /> */}
           <Tooltip />

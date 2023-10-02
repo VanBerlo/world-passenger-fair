@@ -140,11 +140,9 @@ function IndexPage() {
 
     try {
       // Generate random data for carriages and passengers
-
       const binaryRandom = () => (Math.random() > 0.5 ? 'Occupied' : 'Free');
-
-      const date = getRandomDateWithinDay();
-
+      // const date = getRandomDateWithinDay();
+      const date = new Date();
       const carriages = [];
 
       for (let i = 0; i < CARRIAGE_COUNT; i++) {
@@ -262,37 +260,21 @@ function IndexPage() {
 
   return (
     <Box sx={{ p: 4 }}>
-      {/* <Fab sx={{ position: 'absolute', bottom: 40, right: 40 }} onClick={() => addSample()}>
-
-        <Add />
-
-      </Fab>
-
-     
-
-     
-
       {/* CONTENT */}
 
-      <Fab sx={{ position: 'absolute', bottom: 40, left: 40 }} onClick={() => deleteSamples()}>
-        <DeleteForever />
-      </Fab>
-
-      <Header activeCarriage={activeCarriage + 1} setActiveCarriage={setActiveCarriage} handlePortConnection={connectToPorts} port={port} />
-
+      <Header
+        activeCarriage={activeCarriage + 1}
+        setActiveCarriage={setActiveCarriage}
+        handlePortConnection={connectToPorts}
+        handleDataDeletion={() => setSampleData(null)}
+        port={port}
+      />
       <Grid container sx={{}}>
         {/* COLUMN 1 */}
 
         <Grid container item xs={4} direction={'column'} justifyContent={'space-between'}>
-          {/*TIMER */}
-
-          <Grid item component={Paper} variant="outlined" sx={{ p: 2 }}>
-            <Waittime />
-          </Grid>
-
           {/* CHART */}
-
-          <Grid item component={Paper} variant="outlined" sx={{ p: 2, mt: 2 }}>
+          <Grid item component={Paper} variant="outlined" sx={{ p: 2 }}>
             <BusyBarChart data={sampleData} />
           </Grid>
         </Grid>
@@ -302,7 +284,7 @@ function IndexPage() {
         <Grid container item xs={5} direction={'column'} sx={{ px: 2 }}>
           {/* VIDEO */}
 
-          <VideoPlayer url="https://youtu.be/K7ZWgnrmbow" />
+          <VideoPlayer/>
         </Grid>
 
         {/* COLUMN 3 */}

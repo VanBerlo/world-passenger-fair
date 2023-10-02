@@ -15,6 +15,8 @@ function SeatsAvailable(props) {
   
   if (!lastestDatapoint || lastestDatapoint.carriages[active]) return null;
 
+  if(!lastestDatapoint || !lastestDatapoint.carriages[active]) return null
+
   const rows = lastestDatapoint.carriages[active].seating_array;
 
   const { passengers, capacity } = lastestDatapoint.carriages[active];

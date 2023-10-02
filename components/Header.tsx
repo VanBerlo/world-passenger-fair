@@ -6,19 +6,42 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Image from 'next/image';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { Train } from '@mui/icons-material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Stack } from '@mui/material';
+import { DeleteForever, Train } from '@mui/icons-material';
 
-export default function Header({ activeCarriage = 1, port, setActiveCarriage, handlePortConnection }) {
+export default function Header({ activeCarriage = 1, port, setActiveCarriage, handlePortConnection, handleDataDeletion }) {
+  const [noMatrix, setNoMatrix] = React.useState(false);
   const handleCarriageChange = (e) => {
     if (setActiveCarriage) {
       setActiveCarriage(e.target.value);
     }
   };
 
+  // Function to delete all samples
+  const deleteSamples = async () => {
+    try {
+      const response = await fetch('/api/delete-samples', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the samples!');
+      }
+
+      const data = await response.json();
+      return data;
+      handleDataDeletion();
+    } catch (error) {
+      console.log('There was a problem deleting the Samples.');
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      <Dialog open={Boolean(!port)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={Boolean(!port && !noMatrix)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">{'Connect The LED Matrix'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -28,6 +51,9 @@ export default function Header({ activeCarriage = 1, port, setActiveCarriage, ha
         <DialogActions>
           <Button onClick={handlePortConnection} color="primary" variant="contained">
             Connect LED Matrix
+          </Button>
+          <Button onClick={() => setNoMatrix(true)} color="primary">
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
@@ -47,9 +73,13 @@ export default function Header({ activeCarriage = 1, port, setActiveCarriage, ha
               display: 'flex',
             }}
           >
-            <Image src="/assets/images/logo_white.png" width={200} height={20} />
+            <Image alt="logo" src="/assets/images/logo_white.png" width={200} height={20} />
 
-            <Box>
+            <Stack gap={1} direction={'row'}>
+              <IconButton color="inherit" onClick={deleteSamples}>
+                <DeleteForever />{' '}
+              </IconButton>
+
               <FormControl sx={{ minWidth: 120, color: (theme) => theme.palette.primary.contrastText }} size="small">
                 <Select
                   startAdornment={<Train sx={{ mr: 1 }} />}
@@ -68,7 +98,7 @@ export default function Header({ activeCarriage = 1, port, setActiveCarriage, ha
                   <MenuItem value={4}>Carriage 4</MenuItem>
                 </Select>
               </FormControl>
-            </Box>
+            </Stack>
           </Toolbar>
         </AppBar>
         <Toolbar />
